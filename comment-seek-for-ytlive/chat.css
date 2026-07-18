@@ -1,0 +1,40 @@
+/* コメントシーク for YouTube Live - chat.css
+   チャットリプレイに注入するジャンプボタンの見た目。
+   小さく控えめに。YouTubeのダーク/ライト両テーマで視認できる配色にする。 */
+
+.nnw-seek-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  margin-left: 4px;
+  padding: 0 3px;
+  min-width: 16px;
+  height: 16px;
+  line-height: 16px;
+  font-size: 10px;
+  border: none;
+  border-radius: 3px;
+  background: transparent;
+  /* currentColorに頼らず、両テーマで見える半透明グレーを使う */
+  color: rgba(128, 128, 128, 0.9);
+  cursor: pointer;
+  opacity: 0.45;
+  transition: opacity 0.1s ease, background 0.1s ease;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.nnw-seek-btn:hover {
+  opacity: 1;
+  background: rgba(128, 128, 128, 0.2);
+}
+
+.nnw-seek-btn:active {
+  background: rgba(128, 128, 128, 0.35);
+}
+
+.nnw-seek-btn:focus {
+  outline: 1px solid rgba(128, 128, 128, 0.6);
+  outline-offset: 0;
+}

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>広告カーテン for OBS</title>
+  <style>
+    :root {
+      --bg: #1e2128;
+      --panel: #262b34;
+      --text: #e6e8ec;
+      --muted: #9aa2ad;
+      --accent: #4c8faf;
+      --ok: #4caf7d;
+      --warn: #e08000;
+      --bad: #d05050;
+      --border: #363c47;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      width: 300px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", "Meiryo", sans-serif;
+      font-size: 13px;
+      padding: 14px;
+    }
+    h1 { margin: 0 0 12px; font-size: 14px; font-weight: 600; }
+    .row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .row-label { font-weight: 600; }
+    /* トグルスイッチ */
+    .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; inset: 0; cursor: pointer;
+      background: #4a4f59; border-radius: 24px; transition: background 0.15s;
+    }
+    .slider::before {
+      content: ""; position: absolute; height: 18px; width: 18px;
+      left: 3px; bottom: 3px; background: #fff; border-radius: 50%;
+      transition: transform 0.15s;
+    }
+    .switch input:checked + .slider { background: var(--ok); }
+    .switch input:checked + .slider::before { transform: translateX(22px); }
+    /* ステータス表示 */
+    .panel {
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 12px; margin-bottom: 12px;
+    }
+    .status-line { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: #555; flex-shrink: 0; }
+    .dot.ok { background: var(--ok); }
+    .dot.warn { background: var(--warn); }
+    .dot.bad { background: var(--bad); }
+    .status-text { line-height: 1.4; }
+    .error-text { color: var(--bad); font-size: 11px; line-height: 1.5; margin-top: 6px; word-break: break-all; }
+    /* ボタン */
+    button {
+      width: 100%;
+      background: var(--accent); color: #fff; border: none; border-radius: 6px;
+      padding: 8px 0; font-size: 13px; font-weight: 600; cursor: pointer;
+      font-family: inherit;
+    }
+    button:hover { filter: brightness(1.1); }
+    button:disabled { background: #4a4f59; color: var(--muted); cursor: default; filter: none; }
+    button.stop { background: var(--bad); }
+    .hint { color: var(--muted); font-size: 11px; line-height: 1.5; margin-top: 6px; }
+    .footer { margin-top: 12px; text-align: right; }
+    .footer a { color: var(--accent); font-size: 12px; cursor: pointer; text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <h1>広告カーテン for OBS</h1>
+
+  <div class="row">
+    <span class="row-label">有効化</span>
+    <label class="switch">
+      <input type="checkbox" id="enabled">
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <div class="panel">
+    <div class="status-line">
+      <span class="dot" id="obs-dot"></span>
+      <span class="status-text" id="obs-text">OBS: 確認中…</span>
+    </div>
+    <div class="status-line">
+      <span class="dot" id="state-dot"></span>
+      <span class="status-text" id="state-text">状態: 確認中…</span>
+    </div>
+    <div class="status-line">
+      <span class="dot" id="tab-dot"></span>
+      <span class="status-text" id="tab-text">このタブ: 確認中…</span>
+    </div>
+    <div class="error-text" id="error-text" hidden></div>
+  </div>
+
+  <button id="preconsume-btn" disabled>事前消化を開始</button>
+  <p class="hint">
+    事前消化: 同時視聴の前に本編だけを16倍速で走破し、広告枠を先に消化します。
+    広告は等速で普通に再生されます(スキップは手動)。
+  </p>
+
+  <button id="curtain-test-btn" class="secondary" style="margin-top:10px;background:#4a4f59" disabled>カーテン動作テスト(3秒)</button>
+  <p class="hint">
+    OBSのソースが実際に隠れる→3秒後に戻ることを確認できます。
+    失敗した場合は原因が下に表示されます。
+  </p>
+
+  <div class="footer">
+    <a id="open-options">設定を開く</a>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
