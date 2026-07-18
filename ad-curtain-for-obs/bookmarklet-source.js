@@ -163,10 +163,23 @@ return !!(p && p.isConnected && (p.classList.contains('ad-showing') || p.classLi
 }
 const mo = new MutationObserver(() => {
 const a = isAd();
-if (a !== st.adNow) { st.adNow = a; paint(); evaluate(); }
+if (a !== st.adNow) {
+st.adNow = a;
+paint();
+evaluate();
+// 広告明け(=ポストロール終了の可能性)に本編終了状態を確認する
+if (!a) { setTimeout(checkEnded, 500); }
+}
 });
 function onEnded() { if (!isAd()) { st.endedHold = true; paint(); evaluate(); } }
 function onPlaying() { if (!isAd() && st.endedHold) { st.endedHold = false; paint(); evaluate(); } }
+// 本編終了の直接判定。終了直前にポストロール広告が挟まると'ended'イベントは
+// 広告中に発火してガードで捨てられるため、プレイヤーAPIの状態(0=終了)でも拾う。
+function checkEnded() {
+const p = st.player;
+if (isAd() || st.endedHold || !p || typeof p.getPlayerState !== 'function') { return; }
+if (p.getPlayerState() === 0) { st.endedHold = true; paint(); evaluate(); }
+}
 function attach() {
 const p = document.getElementById('movie_player');
 if (p && p !== st.player) {
@@ -255,6 +268,6 @@ saveCfg(c);
 }
 makePanel();
 attach();
-st.findTimer = setInterval(attach, 2000);
+st.findTimer = setInterval(() => { attach(); checkEnded(); }, 2000);
 connect();
 })();

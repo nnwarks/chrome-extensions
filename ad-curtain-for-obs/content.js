@@ -54,6 +54,9 @@
     lastAd = ad;
     send({ type: 'ad-state', ad });
 
+    // 広告明け(=ポストロール終了の可能性)に本編終了状態を確認する
+    if (!ad && !preconsume) setTimeout(checkEndedFallback, 500);
+
     if (preconsume) {
       applyPreconsumeRate();
       // 広告中に事前消化を開始していた場合、広告明けに先頭からやり直す
@@ -78,15 +81,32 @@
   }
 
   // ---- 動画終了/再生開始の検知(動画探し中の画面を配信に載せないための情報) ----
-  let videoEl = null; // ended/playingリスナーを張ったvideo要素
+  let videoEl = null;        // ended/playingリスナーを張ったvideo要素
+  let endedReported = false; // 同じ終了を繰り返し送らないためのフラグ
 
   function onVideoEnded() {
     if (preconsume) return; // 事前消化の走破終端は対象外(SW側でも掃除する)
     if (isAdNow()) return;  // 広告素材のendedは無視
+    endedReported = true;
     send({ type: 'video-ended' });
   }
   function onVideoPlaying() {
+    if (!isAdNow()) endedReported = false;
     send({ type: 'video-playing', ad: isAdNow() });
+  }
+
+  // 本編終了の直接判定。終了直前にポストロール広告が挟まると'ended'イベントは
+  // 広告中に発火して上のガードで捨てられるため、「本編が終端で停止している」を
+  // video要素の状態から直接確認する(広告明けと2秒周期の両方で呼ぶ)。
+  function checkEndedFallback() {
+    if (preconsume || isAdNow() || endedReported) return;
+    const v = getVideo();
+    if (!v) return;
+    const d = v.duration;
+    if (v.paused && isFinite(d) && d > 0 && v.currentTime >= d - 1.5) {
+      endedReported = true;
+      send({ type: 'video-ended' });
+    }
   }
   function attachVideo() {
     const v = getVideo();
@@ -102,6 +122,7 @@
 
   function findPlayer() {
     attachVideo();
+    checkEndedFallback();
     const p = document.getElementById('movie_player');
     if (p) {
       if (p !== player) attachPlayer(p);
@@ -126,6 +147,7 @@
   // SPAなので定期再探索+遷移イベントの両方で追う
   setInterval(findPlayer, 2000);
   window.addEventListener('yt-navigate-finish', () => {
+    endedReported = false; // 新しい動画では終了報告をやり直す
     setTimeout(findPlayer, 0);
     // ページ遷移したら事前消化は打ち切る(対象動画が変わるため)
     if (preconsume) {
