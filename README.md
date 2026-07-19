@@ -46,3 +46,8 @@ PRIVACY-POLICY.md          プライバシーポリシー
 ## 作者
 
 nnwarks — https://nnwarks.com
+
+## 関連プロジェクト
+
+- [広告カーテン for OBS デスクトップ版](https://github.com/nnwarks/ad-curtain-desktop) —
+  ブラウザに一切触れず、画面キャプチャから広告を検知するWindowsアプリ版
