@@ -32,7 +32,7 @@ YouTubeライブ配信アーカイブの「チャットのリプレイ」に、
 一切ありません。設定(ジャンプ秒数)はブラウザ内にのみ保存されます。
 
 **Q. コードを確認したい**
-全ソースコードをGitHubで公開しています: https://github.com/nnwarks
+全ソースコードをGitHubで公開しています: https://github.com/nnwarks/chrome-extensions
 
 ## 注意事項
 

@@ -42,10 +42,10 @@ YouTube動画の同時視聴配信で、広告が始まった瞬間にOBSのソ�
 広告には一切干渉しません(ブロッカーではありません)。自分の配信に何を映すかは配信者の編集権限の範囲です。
 
 **Q. 通信先は?**
-同一PC内のOBS(localhost)だけです。外部サーバーへの送信・データ収集は一切ありません。
+あなたが設定したOBSだけです(初期設定は同一PC内のlocalhost)。開発者や第三者のサーバーへの送信・データ収集は一切ありません。
 
 **Q. コードを確認したい**
-全ソースコードをGitHubで公開しています: https://github.com/nnwarks
+全ソースコードをGitHubで公開しています: https://github.com/nnwarks/chrome-extensions
 権限は最小限(storage / scripting / youtube.comのみ)、依存ライブラリゼロの素のJavaScriptなので、数分で監査できます。
 
 **Q. 拡張機能をインストールできない環境(事務所の管理PC等)では?**
